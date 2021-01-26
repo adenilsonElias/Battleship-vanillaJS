@@ -1,0 +1,19 @@
+{
+  "name": "battleship",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch-sass": "node-sass --watch --output-style compressed scss -o css",
+    "watch-typeScript": "tsc-watch",
+    "start": "npm run watch-sass & npm run watch-typeScript"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-sass": "^5.0.0",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.1.2"
+  }
+}

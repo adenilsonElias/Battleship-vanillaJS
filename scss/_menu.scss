@@ -1,0 +1,114 @@
+.menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #2F6166;
+    width: 20%;
+    height: 100%;
+    color: white;
+    // background-color: brown;
+    h1 {
+        text-align: center;
+        color: white;
+    }
+
+    .playerActived {
+        font-weight: bold;
+    }
+    .playerNotActived {
+        font-weight: lighter;
+    }
+    
+    .config{
+        flex-direction: column;
+
+        h2 {
+            color: white;
+        }
+
+        .playerSelect {
+            display: flex;
+            input {
+                margin-right: 10px;
+            }
+        }
+    }
+    .button {
+        margin-top: 10px;
+        border: 1px solid black;
+        background-color: #52AAB3;
+        border-radius: 10px;
+        font-size: larger;
+        color: white;
+    }
+
+    .button + .button {
+        margin-top: 10px;
+    }
+    .pos{
+        flex-direction: column;
+        .deactivate {
+            display: none;
+        }
+
+        .shipSelectorBox{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .shipQuant {
+            align-self: center;
+        }
+
+        .orientation {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+            #horizontal {
+                margin-right: 5px;
+            }
+            #vertical {
+                margin-left: 5px;
+            }
+            button {
+                width: 100%;
+            }
+        }
+
+        .buttonActivate {
+            border: #995828 solid 2px;
+        }
+
+        .buttonDeactivate{
+            border-style: none;
+        }
+
+        button:focus{
+            outline: none;
+
+        }
+
+        .squareSelect {
+            width: 40px;
+            height: 40px;
+        }
+        .sq1 {
+            background-color: #C97E49;
+        }
+        .sq2 {
+            background-color: #ACC953;
+        }
+        .sq3 {
+            background-color: #AE71C9;
+        }
+    }
+    .game{
+        flex-direction: column;
+
+        .winner {
+            color: lightgreen; // lebrar de por uma cor descente
+            font-size: 2rem;
+            text-align: center;
+        }
+    }
+}

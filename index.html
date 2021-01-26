@@ -1,0 +1,110 @@
+<!DOCTYPE html5>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="./src/javascript/table.js"></script>
+    <script type="module" src="./src/javascript/menu.js"></script>
+    <script type="module" src="./src/javascript/index.js"> </script>
+</head>
+
+<body>
+    <main>
+        <!-- Tabuleiro -->
+        <div class="tab" id="tabuleiro"></div>
+        <!-- Menu -->
+        <div class="menu" id="divMenu">
+            <h1>Battleship</h1>
+            <!-- Menu 1 -->
+            <div class="config" id="menuConf">
+                <h2>Configuração</h2>
+                <select name="dimensão" id="dimensao" required="true">
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                <label for="dimensao">tamanho do tabuleiro</label>
+                <div class="playerSelect">
+                    <input type="radio" name="playerQuant" id="player1" value="1" checked>
+                    <label for="player1">1 jogador</label>
+                </div>
+                <div class="playerSelect">
+
+                    <input type="radio" name="playerQuant" id="player2" value="2">
+                    <label for="player2">2 jogadores</label>
+                </div>
+                <button type="button" class="button" id="continue1">Continuar</button>
+            </div>
+            <!-- Menu 2 -->
+            <div class="pos" id="menuPos">
+                <h2>Posicionamento</h2>
+                <div class="playerActived" id="player1Text">Jogador 1</div>
+                <div class="playerNotActived" id="2Player"></div>
+                <div class="shipSelectorBox">
+                    <div class="shipNameColor">
+                        <div class="ship1">Crusador</div>
+                        <div class="squareSelect sq1" draggable="true" id="crusador"></div>
+                    </div>
+                    <div class="shipQuant" id="crusadorQuant">
+                    </div>
+                </div>
+                <div class="shipSelectorBox">
+                    <div class="shipNameColor">
+                        <div class="ship2">Encolraçado</div>
+                        <div class="squareSelect sq2" draggable="true" id="encolraçado"></div>
+                    </div>
+                    <div class="shipQuant" id="encolracadoQuant">
+                    </div>
+                </div>
+                <div class="shipSelectorBox">
+                    <div class="shipNameColor">
+                        <div class="ship3">Porta avião</div>
+                        <div class="squareSelect sq3" draggable="true" id="porta-aviao"></div>
+                    </div>
+                    <div class="shipQuant" id="porta_aviaoQuant">
+                    </div>
+                </div>
+
+                <div class="orientation">
+                    <button type="button" class="button" id="horizontal">horizontal</button>
+                    <button type="button" class="button" id="vertical">vertical</button>
+                </div>
+                <button type="button" class="button" id="removerButton">Remover</button>
+                <button type="button" class="button deactivate" id="nextPlayerButton">Jogador 2</button>
+                <button type="button" class="button" id="continue2">Continuar</button>
+
+            </div>
+            <!-- Menu 3 -->
+            <div class="game" id="menuGame">
+                <h2>Em jogo</h2>
+                <div class="playerActived" id="player1InGame">Adenilson</div>
+                <div class="ship1">Crusador</div>
+                <div class="shipQuant" id="cQ"></div>
+                <div class="ship2">Encolraçado</div>
+                <div class="shipQuant" id="eQ"></div>
+                <div class="ship3">Porta avião</div>
+                <div class="shipQuant" id="paQ"></div>
+                <hr />
+                <div class="playerNotActived" id="player2InGame">Machine</div>
+                <div class="ship1">Crusador</div>
+                <div class="shipQuant" id="cQ2"></div>
+                <div class="ship2">Encolraçado</div>
+                <div class="shipQuant" id="eQ2"></div>
+                <div class="ship3">Porta avião</div>
+                <div class="shipQuant" id="paQ2"></div>
+                <div class="winner deactivate" id="winnerText"> <div id="playerName"></div> Won</div>
+                <button type="button" class="button" id="config">config</button>
+                <button type="button" class="button" id="reset">reset</button>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

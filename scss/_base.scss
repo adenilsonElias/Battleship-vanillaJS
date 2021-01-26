@@ -1,0 +1,19 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+body {
+    background-color: transparent;
+}
+
+main{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.deactivate {
+    display: none;
+}
