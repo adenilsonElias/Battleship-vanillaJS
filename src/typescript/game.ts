@@ -1,10 +1,15 @@
+import { shoot } from "./IA.js";
 import { getPlayerQuant, getPlayerShipInGame, initMenu3, playerAtualInGameVisual, setPlayerShipInGame, setPlayerShipQuantVisual } from "./menu.js";
-import { createVisualTable, destroyTable, getTable, getTableSize, setTable, showTable } from "./table.js";
+import { createVisualTable, destroyTable, getTable, getTableSize, setTable, playerName } from "./table.js";
 
 let mocked = false;
 let atualPlayer = 0;
 let gameStarted = false;
 
+
+export const getGameStarted = () => {
+    return gameStarted
+}
 
 const shipSize: any = {
     21: 2,
@@ -14,60 +19,90 @@ const shipSize: any = {
 
 export const initGame = () => {
     startGame()
-    createVisualTable(atualPlayer + 1);
+    createVisualTable();
     initMenu3()
-    // if (mocked) {
-    //     let table1 = [
-    //         [0, -1, 2, -2, 2, -2, 2, -1],
-    //         [0, -2, 2, -3, 2, -3, 2, -1],
-    //         [-1, 3, -3, 3, -3, 4, -2, 0],
-    //         [-1, 3, -2, 3, -2, 4, -1, 0],
-    //         [-1, 3, -2, 3, -2, 4, -1, 0],
-    //         [0, -1, 0, -1, -1, 4, -1, 0],
-    //         [0, 0, 0, 0, 0, -1, 0, 0],
-    //         [0, 0, 0, 0, 0, 0, 0, 0]
-    //     ]
-    //     setTable(table1, table1);
-    //     startGame();
-    //     showTable()
-    //     
-    // }
 }
 
-export const squareClickInGame = (element: HTMLElement, y: number, x: number) => {
-    if (gameStarted == false) return;
+export const CPUshoot = (x: number, y: number, player: number) => {
     let allmatriz = getTable();
-    let matrizWork = allmatriz[atualPlayer];
-    let oldPlayer = atualPlayer;
-    let time: number = 0;
-    if (matrizWork[y][x] == 1 || matrizWork[y][x] > 20) return;
+    let matrizWork = allmatriz[player];
+
+    if (matrizWork[y][x] == 1 || matrizWork[y][x] > 20) return 'INVALIDO'; // Espaço que ja deu um tiro
     if (matrizWork[y][x] == 0) {
+        // Tiro na agua e passa para o proximo jogador
         matrizWork[y][x] = 1;
-        nextPlayer()
-        element.style.backgroundColor = 'blue' // tiro na agua, proximo player joga
-        time = 1000;
+        setTable(matrizWork, allmatriz[1])
+        return 'AGUA'
     }
     else {
-        // console.log(Number.parseFloat(matrizWork[y][x] + '1'));
+        // Acertou um barco
         matrizWork[y][x] = Number.parseFloat(matrizWork[y][x] + '1');
+        setTable(matrizWork, allmatriz[1])
+        if (shipDestroyed(matrizWork.map((value) => value.map((value) => value)), y, x, 1)) {
+            return 'AFUNDOU';
+        }
+        return 'ACERTOU'
     }
-    allmatriz[oldPlayer] = matrizWork;
-    if (matrizWork[y][x] != 1) {
-        shipDestroyed(matrizWork.map((value) => value.map((value) => value)), y, x, 1);
+}
+
+export const squareClickInGame = (element: HTMLElement | null = null, y: number, x: number, classname : playerName) => {
+    let playerAtual: playerName = atualPlayer == 0 ? "PLAYER1" : "PLAYER2"
+    if (gameStarted == false || playerAtual == classname ) return; // função so pode ser execultada se estiver no jogo
+    let allmatriz = getTable();
+    let matrizInt = (atualPlayer + 1) % 2
+    let matrizWork = allmatriz[matrizInt];
+    let oldPlayer = atualPlayer;
+    let time: number = 0;
+    let acertou: boolean = true;
+    if (matrizWork[y][x] == 1 || matrizWork[y][x] > 20) return; // Espaço que ja deu um tiro
+    if (matrizWork[y][x] == 0) {
+        // Tiro na agua e passa para o proximo jogador
+        matrizWork[y][x] = 1;
+        acertou = false;
     }
-    setTable(...allmatriz);
-    console.log('player atual', atualPlayer)
-    setTimeout(() => {
+    else {
+        // Acertou um barco
+        matrizWork[y][x] = Number.parseFloat(matrizWork[y][x] + '1');
+        acertou = true;
+    }
+    if (acertou) {
+        allmatriz[matrizInt] = matrizWork;
+        if (matrizWork[y][x] != 1) {
+            // se não acertou a agua verifica se o barco foi afundado
+            if (shipDestroyed(matrizWork.map((value) => value.map((value) => value)), y, x, 1)){
+                endGame(); // verifica se o jogo acabou
+            }
+        }
+        // Remonta o tabuleiro
+        setTable(...allmatriz);
         destroyTable(false);
-        createVisualTable(atualPlayer + 1);
-    }, time)
-    endGame();
+        createVisualTable()
+        // verifica se todos os barcos do jogador foram afundados
+    } else {
+        allmatriz[matrizInt] = matrizWork;
+        setTable(...allmatriz);
+        destroyTable(false);
+        createVisualTable();
+        nextPlayer()
+    }
+
+
 
 }
 
-const nextPlayer = () => {
+export const nextPlayer = () => {
     if (getPlayerQuant() == 1) {
-
+        if (atualPlayer == 0) {
+            atualPlayer = 1;
+            playerAtualInGameVisual(2);
+            shoot();
+            destroyTable(false)
+            createVisualTable()
+        }
+        else {
+            atualPlayer = 0;
+            playerAtualInGameVisual(1);
+        }
     }
     else {
         if (atualPlayer == 0) {
@@ -77,7 +112,6 @@ const nextPlayer = () => {
         else {
             atualPlayer = 0;
             playerAtualInGameVisual(0)
-
         }
         console.log(atualPlayer);
     }
@@ -105,7 +139,7 @@ export const startGame = () => {
     });
     setTable(table1, table2);
     destroyTable(false)
-    createVisualTable(2)
+    createVisualTable()
     gameStarted = true;
 }
 
@@ -136,6 +170,7 @@ const shipDestroyed = (table: number[][], y: number, x: number, quant: number) =
         playermatriz[(atualPlayer + 1) % 2] = player;
         setPlayerShipInGame(playermatriz[0], playermatriz[1]);
         setPlayerShipQuantVisual()
+        return true
     }
     return false
 }
@@ -197,7 +232,7 @@ const autoPos = () => {
     setTable(table1, table2)
 }
 
-const endGame = () => {
+export const endGame = () => {
     let [pl1, pl2] = getPlayerShipInGame()
     let score1 = pl1.crusador + pl1.encolracado + pl1.porta_aviao
     let score2 = pl2.crusador + pl2.encolracado + pl2.porta_aviao
@@ -213,10 +248,10 @@ const endGame = () => {
     gameStarted = false
 }
 
-const showWinner = (player : string) => {
+const showWinner = (player: string) => {
     let playerName = document.getElementById('playerName')
     let textWinner = document.getElementById('winnerText');
-    if(playerName && textWinner){
+    if (playerName && textWinner) {
         playerName.innerText = player;
         textWinner.classList.remove('deactivate')
     }

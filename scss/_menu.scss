@@ -110,5 +110,17 @@
             font-size: 2rem;
             text-align: center;
         }
+
+        .showtables {
+            display: flex;
+            // background-color: black;
+            flex-direction: row;
+            .button{
+                flex: 1;
+            }
+            .button + .button {
+                margin-left: 5px;
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 import { startGame } from "./game.js";
+import { posCPU } from "./IA.js";
 import { createTable, destroyTable, setTableSize, createVisualTable, getTableSize, getTable } from "./table.js";
 
 let menu: number = 1;
@@ -36,6 +37,7 @@ export const initMenu = () => {
     initOrientationButton(vertical, horizontal);
     initRemoverButton();
     showMenu(menu)
+    tablesButtons()
 }
 
 export const moveForwardMenu = () => {
@@ -121,7 +123,6 @@ export const getShipCollected = () => {
 const initButtonContinue1 = (continue1: HTMLElement, nextPlayerButton: HTMLElement, continue2: HTMLElement) => {
     if (continue1 && nextPlayerButton) {
         continue1.addEventListener("click", (event: any) => {
-            let dimensao: HTMLSelectElement | null = <HTMLSelectElement>document.getElementById("dimensao");
             let radio = <NodeListOf<HTMLInputElement>>document.getElementsByName("playerQuant");
             radio.forEach((value) => {
                 if (value.checked) {
@@ -143,14 +144,13 @@ const initButtonContinue1 = (continue1: HTMLElement, nextPlayerButton: HTMLEleme
             if (secondPlayerLayer) {
                 secondPlayerLayer.innerText = player2Name;
             }
-            if (dimensao) {
-                let size = Number.parseFloat(dimensao.value);
-                setTableSize(size);
-                createTable()
-                moveForwardMenu();
-                initPlayerShips()
-                setShipQuantScreen();
-            }
+
+            setTableSize(10);
+            createTable()
+            moveForwardMenu();
+            initPlayerShips()
+            setShipQuantScreen();
+
         })
     }
 }
@@ -167,7 +167,7 @@ const initContinueButton2 = (continue2: HTMLElement, nextPlayerButton: HTMLEleme
                     document.getElementById('2Player')?.classList.replace('playerNotActived', 'playerActived')
                     atualPlayerPos = 2;
                     destroyTable(false)
-                    createVisualTable(getAtualPlayerPos());
+                    createVisualTable();
                     initPlayerShips()
                     setShipQuantScreen();
                 }
@@ -177,10 +177,11 @@ const initContinueButton2 = (continue2: HTMLElement, nextPlayerButton: HTMLEleme
             let player = getPlayersShipQuant()[atualPlayerPos - 1]
             if (player.crusador == 0 && player.encolracado == 0 && player.porta_aviao == 0) {
                 moveForwardMenu();
+                if (playerQuant == 1) {
+                    posCPU();
+                }
                 startGame();
                 initMenu3();
-                destroyTable(false);
-                createVisualTable(1);
             }
         })
     }
@@ -397,30 +398,48 @@ export const initMenu3 = () => {
 }
 
 export const setPlayerShipQuantVisual = () => {
-    
+
     let cruQ = document.getElementById('cQ')
     let encQ = document.getElementById('eQ')
     let cPAQ = document.getElementById('paQ')
     let cruQ2 = document.getElementById('cQ2')
     let encQ2 = document.getElementById('eQ2')
     let cPAQ2 = document.getElementById('paQ2')
-    if(cruQ && encQ && cPAQ){
+    if (cruQ && encQ && cPAQ) {
         cruQ.innerText = player1ShipInGame.crusador.toString();
         encQ.innerText = player1ShipInGame.encolracado.toString();
         cPAQ.innerText = player1ShipInGame.porta_aviao.toString();
     }
-    if(cruQ2 && encQ2 && cPAQ2){
+    if (cruQ2 && encQ2 && cPAQ2) {
         cruQ2.innerText = player2ShipInGame.crusador.toString();
         encQ2.innerText = player2ShipInGame.encolracado.toString();
-        cPAQ2.innerText = player2ShipInGame.porta_aviao.toString(); 
+        cPAQ2.innerText = player2ShipInGame.porta_aviao.toString();
     }
 }
 
-export const playerAtualInGameVisual = (player : number) => {
+export const playerAtualInGameVisual = (player: number) => {
     let player1 = document.getElementById('player1InGame')
     let player2 = document.getElementById('player2InGame')
-    if(player1 && player2){
+    if (player1 && player2) {
         player1.style.fontWeight = player == 0 ? 'bold' : 'lighter'
         player2.style.fontWeight = player == 1 ? 'bold' : 'lighter'
     }
+}
+
+const tablesButtons = () => {
+    let tablebutton1 = document.getElementById("table1") as HTMLElement
+    let tablebutton2 = document.getElementById("table2") as HTMLElement
+
+    tablebutton1.addEventListener("click", (event: MouseEvent) => {
+        event.preventDefault()
+        destroyTable(false)
+        createVisualTable()
+
+    })
+    tablebutton2.addEventListener("click", (event: MouseEvent) => {
+        event.preventDefault()
+        destroyTable(false)
+        createVisualTable()
+
+    })
 }
