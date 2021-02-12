@@ -211,8 +211,8 @@ const initButtonConfig = (configButton: HTMLElement) => {
     if (configButton) {
         configButton.addEventListener("click", (event: any) => {
             config()
-            setPlayerShipQuantVisual()
             showMenu(menu)
+            setShipQuantScreen()
             document.getElementById('player1Text')?.classList.replace('playerNotActived', 'playerActived')
             document.getElementById('2Player')?.classList.replace('playerActived', 'playerNotActived')
             atualPlayerPos = 1;

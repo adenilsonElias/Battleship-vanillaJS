@@ -1,6 +1,6 @@
 import { CPUshoot, getGameStarted, nextPlayer, endGame } from "./game.js";
 import { getPlayersShipQuant } from "./menu.js";
-import { getTable, getTableSize, setTable, createNeigbor, shipSize, shipNameType } from "./table.js";
+import { getTable, getTableSize, setTable, createNeigbor, shipSize, shipNameType, destroyTable, createVisualTable } from "./table.js";
 
 const FINDMODE = 1;
 const ATTACKMODE = 0;
@@ -30,6 +30,8 @@ const resetIAToFindMode = () => {
 }
 
 export const shoot = (): any => {
+    destroyTable(false)
+    createVisualTable()
     let tableSize = getTableSize();
     if (getGameStarted() == false) {
         return
