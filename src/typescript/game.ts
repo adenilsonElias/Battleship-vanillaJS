@@ -1,6 +1,6 @@
 import { shoot } from "./IA.js";
-import { getPlayerQuant, getPlayerShipInGame, initMenu3, playerAtualInGameVisual, setPlayerShipInGame, setPlayerShipQuantVisual } from "./menu.js";
-import { createVisualTable, destroyTable, getTable, getTableSize, setTable, playerName } from "./table.js";
+import { getAtualPlayerPos, getPlayerQuant, getPlayerShipInGame, getPlayersShipQuant, initMenu3, playerAtualInGameVisual, setPlayerShipInGame, setPlayerShipQuant, setPlayerShipQuantVisual, setShipQuantScreen } from "./menu.js";
+import { createVisualTable, destroyTable, getTable, getTableSize, setTable, playerName, shipNameType, createNeigbor } from "./table.js";
 
 let mocked = false;
 let atualPlayer = 0;
@@ -32,6 +32,8 @@ export const CPUshoot = (x: number, y: number, player: number) => {
         // Tiro na agua e passa para o proximo jogador
         matrizWork[y][x] = 1;
         setTable(matrizWork, allmatriz[1])
+        let sound = new Audio("/assets/sounds/water-shoot.wav")
+        sound.play()
         return 'AGUA'
     }
     else {
@@ -39,15 +41,19 @@ export const CPUshoot = (x: number, y: number, player: number) => {
         matrizWork[y][x] = Number.parseFloat(matrizWork[y][x] + '1');
         setTable(matrizWork, allmatriz[1])
         if (shipDestroyed(matrizWork.map((value) => value.map((value) => value)), y, x, 1)) {
+            let sound = new Audio("/assets/sounds/ship-destroyed-explosion.wav")
+            sound.play()
             return 'AFUNDOU';
         }
+        let sound = new Audio("/assets/sounds/ship-explosion.wav")
+        sound.play()
         return 'ACERTOU'
     }
 }
 
-export const squareClickInGame = (element: HTMLElement | null = null, y: number, x: number, classname : playerName) => {
+export const squareClickInGame = (element: HTMLElement | null = null, y: number, x: number, classname: playerName) => {
     let playerAtual: playerName = atualPlayer == 0 ? "PLAYER1" : "PLAYER2"
-    if (gameStarted == false || playerAtual == classname ) return; // função so pode ser execultada se estiver no jogo
+    if (gameStarted == false || playerAtual == classname) return; // função so pode ser execultada se estiver no jogo
     let allmatriz = getTable();
     let matrizInt = (atualPlayer + 1) % 2
     let matrizWork = allmatriz[matrizInt];
@@ -69,8 +75,13 @@ export const squareClickInGame = (element: HTMLElement | null = null, y: number,
         allmatriz[matrizInt] = matrizWork;
         if (matrizWork[y][x] != 1) {
             // se não acertou a agua verifica se o barco foi afundado
-            if (shipDestroyed(matrizWork.map((value) => value.map((value) => value)), y, x, 1)){
+            if (shipDestroyed(matrizWork.map((value) => value.map((value) => value)), y, x, 1)) {
+                let sound = new Audio("/assets/sounds/ship-destroyed-explosion.wav")
+                sound.play()
                 endGame(); // verifica se o jogo acabou
+            } else {
+                let sound = new Audio("/assets/sounds/ship-explosion.wav")
+                sound.play()
             }
         }
         // Remonta o tabuleiro
@@ -79,6 +90,8 @@ export const squareClickInGame = (element: HTMLElement | null = null, y: number,
         createVisualTable()
         // verifica se todos os barcos do jogador foram afundados
     } else {
+        let sound = new Audio("/assets/sounds/water-shoot.wav")
+        sound.play()
         allmatriz[matrizInt] = matrizWork;
         setTable(...allmatriz);
         destroyTable(false);
@@ -94,14 +107,14 @@ export const nextPlayer = () => {
     if (getPlayerQuant() == 1) {
         if (atualPlayer == 0) {
             atualPlayer = 1;
-            playerAtualInGameVisual(2);
+            playerAtualInGameVisual(1);
             shoot();
             destroyTable(false)
             createVisualTable()
         }
         else {
             atualPlayer = 0;
-            playerAtualInGameVisual(1);
+            playerAtualInGameVisual(0);
         }
     }
     else {
@@ -118,9 +131,6 @@ export const nextPlayer = () => {
 }
 
 export const startGame = () => {
-    if (mocked) {
-        autoPos();
-    }
     let [table1, table2] = getTable();
 
     table1.forEach((value, indexY, table) => {
@@ -207,29 +217,80 @@ const shipIs = (ship: number) => {
     }
 }
 
-const autoPos = () => {
-    let [p1, p2] = getPlayerShipInGame()
-    let [table1, table2] = getTable()
-    table1 = [
-        [0, 0, 0, 0, - 1, 0, -1, 0, -1, 0],
-        [0, 0, 0, -1, 2, -2, 2, -2, 3, -1],
-        [0, -1, -1, -2, 2, -2, 2, -2, 3, -1],
-        [-1, 3, 3, 3, -3, 0, -2, -1, 3, -1],
-        [0, -2, -1, -2, 2, -2, 2, -1, -1, 0],
-        [-1, 4, -1, -1, 2, -2, 2, -1, -1, 0],
-        [-1, 4, -1, 0, -1, -1, -1, -1, 3, -1],
-        [-1, 4, -1, 0, -1, 2, -1, -1, 3, -1],
-        [-1, 4, -1, 0, -1, 2, -1, -1, 3, -1],
-        [0, -1, 0, 0, 0, -1, 0, 0, -1, 0,]
-    ]
-    table2 = [[]]
-    p1 = {
-        crusador: 5,
-        encolracado: 3,
-        porta_aviao: 1
+export const randonPos = () => {
+    const shipSize: any = {
+        "crusador": 2,
+        "encolracado": 3,
+        "porta_aviao": 4
     }
-    setPlayerShipInGame(p1, p2)
-    setTable(table1, table2)
+    let shipInGame = getPlayersShipQuant()
+    let tables = getTable()
+    let player = getAtualPlayerPos() - 1
+
+    while (shipInGame[player].crusador > 0) {
+        let x = Math.floor(Math.random() * 10)
+        let y = Math.floor(Math.random() * 10)
+        let direction: 'vertical' | "horizontal" = Math.floor(Math.random() * 2) == 0 ? "vertical" : "horizontal"
+        if (Colission(tables[player], x, y, "crusador", direction) == false) {
+            shipInGame[player].crusador -= 1;
+            for (let i = 0; i < shipSize["crusador"]; i += 1) {
+                if (direction == 'horizontal') {
+                    tables[player][y][x + i] = 2
+                    console.log(tables[player])
+                    createNeigbor(tables[player], x + i, y);
+                } else {
+                    tables[player][y + i][x] = 2
+                    console.log(tables[player])
+                    createNeigbor(tables[player], x, y + i);
+                }
+            }
+        }
+    }
+    while (shipInGame[player].encolracado > 0) {
+        let x = Math.floor(Math.random() * 10)
+        let y = Math.floor(Math.random() * 10)
+        let direction: 'vertical' | "horizontal" = Math.floor(Math.random() * 2) == 0 ? "vertical" : "horizontal"
+        if (Colission(tables[player], x, y, "encolracado", direction) == false) {
+            shipInGame[player].encolracado -= 1;
+
+            for (let i = 0; i < shipSize["encolracado"]; i += 1) {
+                if (direction == 'horizontal') {
+                    tables[player][y][x + i] = 3
+                    createNeigbor(tables[player], x + i, y);
+                } else {
+                    tables[player][y + i][x] = 3
+                    createNeigbor(tables[player], x, y + i);
+                }
+
+            }
+            continue
+        }
+    }
+    while (shipInGame[player].porta_aviao > 0) {
+        let x = Math.floor(Math.random() * 10)
+        let y = Math.floor(Math.random() * 10)
+        let direction: 'vertical' | "horizontal" = Math.floor(Math.random() * 2) == 0 ? "vertical" : "horizontal"
+        if (Colission(tables[player], x, y, "porta_aviao", direction) == false) {
+            shipInGame[player].porta_aviao -= 1;
+
+            for (let i = 0; i < shipSize["porta_aviao"]; i += 1) {
+                if (direction == 'horizontal') {
+                    tables[player][y][x + i] = 4
+                    createNeigbor(tables[player], x + i, y);
+                } else {
+                    tables[player][y + i][x] = 4
+                    createNeigbor(tables[player], x, y + i);
+                }
+
+
+            }
+        }
+    }
+    setPlayerShipQuant(shipInGame[0], shipInGame[1])
+    setShipQuantScreen()
+    setTable(tables[0], tables[1])
+    destroyTable(false)
+    createVisualTable()
 }
 
 export const endGame = () => {
@@ -254,5 +315,36 @@ const showWinner = (player: string) => {
     if (playerName && textWinner) {
         playerName.innerText = player;
         textWinner.classList.remove('deactivate')
+    }
+}
+
+export const Colission = (table: number[][], posX: number, posY: number, ship: shipNameType, orientation: "vertical" | "horizontal") => {
+    const shipSize: any = {
+        "crusador": 2,
+        "encolracado": 3,
+        "porta_aviao": 4
+    }
+    let tableSize = 10
+    if (orientation == 'vertical') {
+        if (posY + shipSize[ship] > tableSize) {
+            return true;
+        }
+        for (let i = 0; i < shipSize[ship]; i += 1) {
+            if (table[posY + i][posX] != 0) {
+                return true
+            }
+        }
+        return false
+    }
+    else {
+        if (posX + shipSize[ship] > tableSize) {
+            return true;
+        }
+        for (let i = 0; i < shipSize[ship]; i += 1) {
+            if (table[posY][posX + i] != 0) {
+                return true
+            }
+        }
+        return false
     }
 }

@@ -32,6 +32,7 @@ const resetIAToFindMode = () => {
 export const shoot = (): any => {
     destroyTable(false)
     createVisualTable()
+    console.info(up, down, left, rigth, mode, direction, lastX, lastY)
     let tableSize = getTableSize();
     if (getGameStarted() == false) {
         return
@@ -66,7 +67,7 @@ export const shoot = (): any => {
             // CPU sabe onde tem um navio mas não sabe qual a direção dele
             if (lastY - 1 >= 0 && up == true) {
                 let retorno = CPUshoot(lastX, lastY - 1, 0);
-                if (retorno == "INVALIDO"){
+                if (retorno == "INVALIDO") {
                     up = false
                     return shoot()
                 }
@@ -91,7 +92,7 @@ export const shoot = (): any => {
             }
             if (lastY + 1 < tableSize && down == true) {
                 let retorno = CPUshoot(lastX, lastY + 1, 0);
-                if (retorno == "INVALIDO"){
+                if (retorno == "INVALIDO") {
                     down = false
                     return shoot()
                 }
@@ -110,7 +111,10 @@ export const shoot = (): any => {
                     endGame()
                     return shoot()
                 }
+            } else {
+                down = false
             }
+            return shoot()
         }
         if (direction == VERTICAL) {
             // CPU sabe onde tem um navio e sabe que está na vertical

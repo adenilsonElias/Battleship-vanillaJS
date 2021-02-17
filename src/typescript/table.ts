@@ -22,7 +22,7 @@ const shipsColor: any = {
 }
 
 const shipsColorClicked: any = {
-    1: 'orange',
+    1: 'lightblue',
     21: '#C97E49',
     31: '#ACC953',
     41: '#AE71C9'
@@ -115,7 +115,7 @@ const createLine = (lineP: number[], lineN: number, tableF: number[][], classNam
     lineP.forEach((value, index) => {
         let square = document.createElement("div");
         square.className = `tabSquare ${className}`;
-        square.id = "tabuleiroSquare";
+        // square.id = "tabuleiroSquare";
         // square.innerHTML = `${value}`;
         square.title = `y=${lineN} x=${index} value=${value}`
         if (getMenuAtual() != 3) {
@@ -123,6 +123,12 @@ const createLine = (lineP: number[], lineN: number, tableF: number[][], classNam
         }
         else {
             square.style.backgroundColor = shipsColorClicked[value]
+            if(value == 1){
+                square.style.backgroundImage = 'url(/assets/images/explosion-32.png)'
+                square.style.backgroundRepeat = 'no-repeat'
+                square.style.backgroundPosition = 'center'
+
+            }
         }
         square.addEventListener("drop", (event: DragEvent) => {
             event.preventDefault()
@@ -150,19 +156,24 @@ const createLine = (lineP: number[], lineN: number, tableF: number[][], classNam
         square.addEventListener("dragover", (event: DragEvent) => {
             event.preventDefault()
             let playerPos: playerName = getAtualPlayerPos() == 1 ? "PLAYER1" : "PLAYER2"
-            let shipCollected : shipNameType = getShipCollected() as shipNameType
+            let shipCollected: shipNameType = getShipCollected() as shipNameType
             if (hasColission(tableF, index, lineN, shipCollected) || playerPos != className) {
                 square.style.backgroundColor = 'red'
             }
             else {
-                square.style.backgroundColor = 'yellow'
+                let orientation = getOrientation()
+                square.style.backgroundColor = "lightgreen";
+                square.style.backgroundImage = orientation == "vertical" ? "url(/assets/images/down-arrow.png)" : "url(/assets/images/right-arrow.png)"
+                square.style.backgroundSize = "40px";
+                square.style.backgroundRepeat = "no-repeat";
+                square.style.backgroundPosition = "center";
             }
 
         })
         square.addEventListener("dragleave", (event: Event) => {
             event.preventDefault()
             if (tableF[lineN][index] <= 0) {
-                square.style.backgroundColor = '#4E6466'
+                square.style.background = '#4E6466'
                 return;
             }
             // if (tableF[lineN][index] < 0) {
@@ -182,8 +193,8 @@ const createLine = (lineP: number[], lineN: number, tableF: number[][], classNam
                     }
                 }
             }
-            if (getMenuAtual() == 3) {                
-                squareClickInGame(square, lineN, index,className);
+            if (getMenuAtual() == 3) {
+                squareClickInGame(square, lineN, index, className);
             }
         })
 

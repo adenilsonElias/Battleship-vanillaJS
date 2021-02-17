@@ -1,4 +1,4 @@
-import { startGame } from "./game.js";
+import { randonPos, startGame } from "./game.js";
 import { posCPU } from "./IA.js";
 import { createTable, destroyTable, setTableSize, createVisualTable, getTableSize, getTable } from "./table.js";
 
@@ -37,7 +37,11 @@ export const initMenu = () => {
     initOrientationButton(vertical, horizontal);
     initRemoverButton();
     showMenu(menu)
-    tablesButtons()
+    document.getElementById("aleatorioButton")?.addEventListener('click',(event : Event)=>{
+        console.log("chamei")
+        event.preventDefault()
+        randonPos()
+    })
 }
 
 export const moveForwardMenu = () => {
@@ -55,6 +59,7 @@ export const moveBackMenu = () => {
 }
 
 export const getAtualPlayerPos = () => {
+    // 1 ou 2
     return atualPlayerPos;
 }
 
@@ -305,7 +310,7 @@ const initPlayerShips = () => {
     }
 }
 
-const setShipQuantScreen = () => {
+export const setShipQuantScreen = () => {
     let crusadorQuant = document.getElementById('crusadorQuant') as HTMLElement;
     let encolracadoQuant = document.getElementById('encolracadoQuant') as HTMLElement;
     let porta_aviaoQuant = document.getElementById('porta_aviaoQuant') as HTMLElement;
@@ -324,6 +329,11 @@ const setShipQuantScreen = () => {
 
 export const getPlayersShipQuant = () => {
     return [player1Ship, player2Ship]
+}
+
+export const setPlayerShipQuant = (player1: playerShipCount, player2: playerShipCount) =>{
+    player1Ship = player1;
+    player2Ship = player2;
 }
 
 export const getPlayerShipInGame = () => {
@@ -424,22 +434,4 @@ export const playerAtualInGameVisual = (player: number) => {
         player1.style.fontWeight = player == 0 ? 'bold' : 'lighter'
         player2.style.fontWeight = player == 1 ? 'bold' : 'lighter'
     }
-}
-
-const tablesButtons = () => {
-    let tablebutton1 = document.getElementById("table1") as HTMLElement
-    let tablebutton2 = document.getElementById("table2") as HTMLElement
-
-    tablebutton1.addEventListener("click", (event: MouseEvent) => {
-        event.preventDefault()
-        destroyTable(false)
-        createVisualTable()
-
-    })
-    tablebutton2.addEventListener("click", (event: MouseEvent) => {
-        event.preventDefault()
-        destroyTable(false)
-        createVisualTable()
-
-    })
 }
