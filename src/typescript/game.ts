@@ -1,8 +1,7 @@
-import { shoot } from "./IA.js";
+import { shoot , resetIAToFindMode } from "./IA.js";
 import { getAtualPlayerPos, getPlayerQuant, getPlayerShipInGame, getPlayersShipQuant, initMenu3, playerAtualInGameVisual, setPlayerShipInGame, setPlayerShipQuant, setPlayerShipQuantVisual, setShipQuantScreen } from "./menu.js";
 import { createVisualTable, destroyTable, getTable, getTableSize, setTable, playerName, shipNameType, createNeigbor } from "./table.js";
 
-let mocked = false;
 let atualPlayer = 0;
 let gameStarted = false;
 
@@ -151,6 +150,8 @@ export const startGame = () => {
     destroyTable(false)
     createVisualTable()
     gameStarted = true;
+    atualPlayer = 0;
+    resetIAToFindMode()
 }
 
 const shipDestroyed = (table: number[][], y: number, x: number, quant: number) => {

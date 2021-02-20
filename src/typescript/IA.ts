@@ -19,7 +19,7 @@ let lastY: number | null = null;
 export const initIA = () => {
 }
 
-const resetIAToFindMode = () => {
+export const resetIAToFindMode = () => {
     up = true;
     down = true;
     left = true;
