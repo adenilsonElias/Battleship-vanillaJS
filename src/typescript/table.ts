@@ -10,6 +10,10 @@ export class Table {
 
     constructor(menu: Menu) {
         this.menu = menu
+        this.menu.updateTableScreen = () =>{
+            this.destroyTable(false)
+            this.createVisualTable()
+        }
         menu.showtable = () => {
             this.destroyTable()
             this.createTable()
@@ -38,7 +42,6 @@ export class Table {
 
         table1Html.innerHTML = "";
         table2Html.innerHTML = "";
-
     }
 
     createVirtualTable = (size: Number = 8) => {
@@ -80,7 +83,12 @@ export class Table {
             // square.innerHTML = `${value}`;
             square.title = `y=${lineN} x=${index} value=${value}`
             if (this.menu.menu != 3) {
-                square.style.backgroundColor = shipsColor[value]
+                console.log(this.menu.atualPlayerPos,className)
+                if(this.menu.atualPlayerPos == 1 && className == 'PLAYER1'){
+                    square.style.backgroundColor = "#4E6466"
+                } else {
+                    square.style.backgroundColor = shipsColor[value]
+                }
             }
             else {
                 square.style.backgroundColor = shipsColorClicked[value]
@@ -88,7 +96,6 @@ export class Table {
                     square.style.backgroundImage = 'url(/assets/images/explosion-32.png)'
                     square.style.backgroundRepeat = 'no-repeat'
                     square.style.backgroundPosition = 'center'
-
                 }
             }
             square.addEventListener("drop", (event: DragEvent) => {

@@ -30,6 +30,7 @@ export class Menu {
     startGame: Function
     randonPos: Function
     posCPU : Function
+    updateTableScreen : Function
     
 
     constructor() {
@@ -52,6 +53,9 @@ export class Menu {
             console.log("Nenhuma função adicionada")
         }
         this.posCPU = () => {
+            console.log("Nenhuma função adicionada")
+        }
+        this.updateTableScreen = () => {
             console.log("Nenhuma função adicionada")
         }
     }
@@ -124,6 +128,7 @@ export class Menu {
                 this.atualPlayerPos = 1;
                 this.initPlayerShips()
                 this.setShipQuantScreen();
+                this.updateTableScreen()
             }
         })
         this.continue2.addEventListener("click", (event: any) => {
